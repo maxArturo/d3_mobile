@@ -1,0 +1,18 @@
+platforms/
+plugins/
+node_modules/
+
+.DS_Store
+# IntelliJ files
+*.iml
+.idea
+
+#windows
+Thumbs.db
+Desktop.ini
+
+*.sw[mnpcod]
+*.log
+*.tmp
+*.tmp.*
+log.txt
