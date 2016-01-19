@@ -1,23 +1,14 @@
-<!--
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#  KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
--->
-# Cordova Hooks
+## Geopositioning with D3 on mobile
 
-Cordova Hooks represent special scripts which could be added by application and plugin developers or even by your own build system  to customize cordova commands. See Hooks Guide for more details:  http://cordova.apache.org/docs/en/edge/guide_appdev_hooks_index.md.html#Hooks%20Guide.
+Because why not. In order to run this app, you need:
+
+- [Cordova](https://cordova.apache.org/)
+
+clone the app, then run 'npm install'. That will get you all the build dependencies so far.
+
+The app JS gets transpiled from ES6, browserified, and moved to the right place via Gulp. run `npm watch` to get any changes packaged on the fly.
+
+run `cordova serve` to see your changes on the browser, though this **is** a GPS project so you'd do better off to run this in an emulator. You will need a Mac for iOS, but any other system that can run the Android SDK will do as well.
+
+`cordova run ios`
+`cordova run android`

@@ -9555,15 +9555,81 @@
 },{}],2:[function(require,module,exports){
 'use strict';
 
-var _d = require('d3');
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _d2 = _interopRequireDefault(_d);
+var _d2 = require('d3');
+
+var _d3 = _interopRequireDefault(_d2);
+
+var _utils = require('./utils');
+
+var _utils2 = _interopRequireDefault(_utils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_d2.default.select('body').append('h1').text('hello world');
+document.addEventListener('deviceready', onDeviceReady, false);
 
-},{"d3":1}]},{},[2])
+function onDeviceReady() {
+  console.log('started app');
+  var geoLocationOptions = {
+    timeout: 10000,
+    enableHighAccuracy: true,
+    maximumAge: 3000
+  };
+  navigator.geolocation.watchPosition(renderPosition, onError, geoLocationOptions);
+}
+
+function renderPosition(position) {
+  console.log('started rendering position');
+  var element = 'geolocation';
+  var coordinates = position.coords;
+
+  var _utils$windowDimensio = _utils2.default.windowDimensions();
+
+  var _utils$windowDimensio2 = _slicedToArray(_utils$windowDimensio, 2);
+
+  var height = _utils$windowDimensio2[0];
+  var width = _utils$windowDimensio2[1];
+
+  _d3.default.select('#' + element).selectAll().transition().duration(750).attr('y', 0).remove();
+
+  var svg = _d3.default.select('#' + element).append('svg').attr('height', height).attr('width', width);
+
+  var statistics = Object.keys(coordinates).map(function (key) {
+    return key + ': ' + coordinates[key];
+  });
+  statistics.push('Last update: ' + position.timestamp);
+
+  console.log(statistics);
+
+  var text = svg.selectAll('text').data(statistics).enter().append('text').attr('x', 15).attr('y', -60).text(function (d) {
+    return d;
+  }).transition().duration(750).attr('y', function (d, i) {
+    return i * 20;
+  });
+}
+
+function onError(err) {
+  console.log('error!');
+  alert('code: ' + err.code + '\n        message: ' + err.message);
+}
+
+},{"./utils":3,"d3":1}],3:[function(require,module,exports){
+'use strict';
+
+exports.windowDimensions = function () {
+  var height = window.orientation === 0 ? window.screen.height : window.screen.width;
+  var width = window.orientation === 0 ? window.screen.width : window.screen.height;
+
+  if (navigator.userAgent.indexOf('Android') !== -1 && window.devicePixelRatio) {
+    width = width / window.devicePixelRatio;
+    height = height / window.devicePixelRatio;
+  }
+
+  return [height, width];
+};
+
+},{}]},{},[2])
 
 
 //# sourceMappingURL=app.js.map
