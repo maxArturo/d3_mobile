@@ -9570,19 +9570,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
-  console.log('started app');
+  var degreesUpdater = renderDegrees(0);
   var geoLocationOptions = {
     timeout: 10000,
     enableHighAccuracy: true,
-    maximumAge: 3000
+    maximumAge: 1000
   };
-  navigator.geolocation.watchPosition(renderPosition, onError, geoLocationOptions);
+  navigator.geolocation.watchPosition(degreesUpdater, onError, geoLocationOptions);
 }
 
-function renderPosition(position) {
-  console.log('started rendering position');
+function onError(err) {
+  console.log('error!');
+  alert('code: ' + err.code + '\n        message: ' + err.message);
+}
+
+function renderDegrees(degrees) {
   var element = 'geolocation';
-  var coordinates = position.coords;
 
   var _utils$windowDimensio = _utils2.default.windowDimensions();
 
@@ -9591,27 +9594,46 @@ function renderPosition(position) {
   var height = _utils$windowDimensio2[0];
   var width = _utils$windowDimensio2[1];
 
-  _d3.default.select('#' + element).selectAll().transition().duration(750).attr('y', 0).remove();
+  var radius = Math.min(width, height) / 2;
 
-  var svg = _d3.default.select('#' + element).append('svg').attr('height', height).attr('width', width);
+  var arc = _d3.default.svg.arc().outerRadius(radius - 10).innerRadius(radius - 70);
 
-  var statistics = Object.keys(coordinates).map(function (key) {
-    return key + ': ' + coordinates[key];
-  });
-  statistics.push('Last update: ' + position.timestamp);
-
-  console.log(statistics);
-
-  var text = svg.selectAll('text').data(statistics).enter().append('text').attr('x', 15).attr('y', -60).text(function (d) {
+  var pie = _d3.default.layout.pie().sort(null).value(function (d) {
     return d;
-  }).transition().duration(750).attr('y', function (d, i) {
-    return i * 20;
   });
-}
 
-function onError(err) {
-  console.log('error!');
-  alert('code: ' + err.code + '\n        message: ' + err.message);
+  var svg = _d3.default.select('body').append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+  var color = ['#98abc5', '#FFFFFF'];
+  var g = svg.selectAll('.arc').data(pie([degrees, 360 - degrees])).enter().append('g').attr('class', 'arc').append('path');
+
+  g.transition().duration(750).style("fill", function (d, i) {
+    return color[i];
+  }).attr("d", arc).each(function (d) {
+    this._current = d;
+  });
+
+  svg.append('text').text(degrees + '°').attr('dy', '-' + width / 6);
+
+  function update(position) {
+    degrees = position.coords.heading;
+    console.debug(position);
+    g.data(pie([degrees, 360 - degrees])).style("fill", function (d, i) {
+      return color[i];
+    }).transition().duration(750).attrTween("d", arcTween);
+
+    svg.selectAll('text').text(degrees + '°').style('font-size', 30);
+  }
+
+  function arcTween(a) {
+    var i = _d3.default.interpolate(this._current, a);
+    this._current = i(0);
+    return function (t) {
+      return arc(i(t));
+    };
+  }
+
+  return update;
 }
 
 },{"./utils":3,"d3":1}],3:[function(require,module,exports){
