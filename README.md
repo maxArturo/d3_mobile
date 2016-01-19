@@ -1,5 +1,7 @@
 ## Geopositioning with D3 on mobile
 
+![](https://raw.githubusercontent.com/maxArturo/d3_mobile/master/screenshot.png)
+
 Because why not. In order to run this app, you need:
 
 - [Cordova](https://cordova.apache.org/)
